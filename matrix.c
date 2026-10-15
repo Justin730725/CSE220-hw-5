@@ -181,8 +181,29 @@ int DiagonalSum(const int D[4], const int A[D[0]][D[1]], int DS[D[2]][D[3]])
      * is too small, still store whatever fits, starting from the top left, so
      * guard every write against the real size of DS.
      */
-    (void)D;
-    (void)A;
-    (void)DS;
-    return 0;
+    // zero everything in DS
+    for (int i = 0; i < D[2]; i++) {
+        for(int j = 0; j < D[3]; j++) {
+            *(*(DS + i) + j) = 0;
+        }
+    }
+    int diagsum = 0;
+    for (int i = 0; i < D[0]; i++) {
+        for (int j = 0; j < D[1]; j++) {
+            if (i == j) {
+                diagsum += *(*(A + i) + j);
+            }
+        }
+    }
+    if (D[2] > 0 && D[3] > 0) {
+        *(*DS) = diagsum;
+    }
+    int antidiagsum = 0;
+    if (D[0] == D[1]) {
+    for (int i = 0; i < D[0]; i++) {
+        antidiagsum += *(*(A + i) + (D[1] - 1 - i));
+    }
+    if (D[2] > 0 && D[3] > 1) {
+        *(*(DS + 0) + 1) = counterdiagsum;
+    }
 }
