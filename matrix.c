@@ -134,11 +134,33 @@ int Multiplication(const int D[6], const int M[D[0]][D[1]],
      *
      * The return values follow the same five rules as HadamardProduct.
      */
-    (void)D;
-    (void)M;
-    (void)N;
-    (void)A;
-    return 0;
+    int kLimit = MIN(D[1], D[2]);
+    // zero everything in A
+    for (int i = 0; i < D[4]; i++) {
+        for(int j = 0; j < D[5]; j++) {
+            *(*(A + i) + j) = 0;
+        }
+    }
+    for (int i = 0; i < MIN(D[0], D[4]); i++) {
+        for (int j = 0; j < MIN(D[3], D[5])) {
+            int sum = 0;
+            for (int k = 0; k < kLimit; k++) {
+                sum += (*(*(M + i) + k)) * (*(*(N + k) + j));
+            }
+            *(*(A + i) + j) = sum;
+        }
+    }
+
+    if ((D[1] == D[2]) && (D[4] == D[0]) && (D[5] == D[3])) {
+        return 1;
+    } else if ((D[1] == D[2]) && (D[4] > D[0]) && (D[5] > D[3])) {
+        return 2;
+    } else if ((D[1] == D[2])) {
+        return -3;
+    } else if (!(D[1] == D[2]) && (D[4] >= D[0]) && (D[5] >= D[3])) {
+        return -1;
+    }
+    return -2;
 }
 
 int DiagonalSum(const int D[4], const int A[D[0]][D[1]], int DS[D[2]][D[3]])
