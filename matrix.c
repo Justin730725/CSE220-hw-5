@@ -142,7 +142,7 @@ int Multiplication(const int D[6], const int M[D[0]][D[1]],
         }
     }
     for (int i = 0; i < MIN(D[0], D[4]); i++) {
-        for (int j = 0; j < MIN(D[3], D[5])) {
+        for (int j = 0; j < MIN(D[3], D[5]); j++) {
             int sum = 0;
             for (int k = 0; k < kLimit; k++) {
                 sum += (*(*(M + i) + k)) * (*(*(N + k) + j));
