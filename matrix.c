@@ -105,13 +105,11 @@ int HadamardProduct(const int D[6], const int M[D[0]][D[1]],
         }
     }
 
-    int compatible = (D[0] == D[2] && D[1] == D[3]);
-
     if ((D[0] == D[4]) && (D[2] == D[4]) && (D[1] == D[5]) && (D[3] == D[5])) {
         return 1;
     } else if ((D[0] == D[2]) && (D[4] > D[0]) && (D[1] == D[3]) && (D[5] > D[1])) {
         return 2;
-    } else if ((D[0] == D[2]) && (D[1] == D[3]) && (D[0] > D[4] || D[1] > D[5])) {
+    } else if ((D[0] == D[2]) && (D[1] == D[3])) {
         return -3;
     } else if (!((D[0] == D[2]) && (D[1] == D[3])) && (D[4] >= minRow) && (D[5] >= minCol) ) {
         return -1;
