@@ -99,6 +99,7 @@ int HadamardProduct(const int D[6], const int M[D[0]][D[1]],
             *(*(A + i) + j) = 0;
         }
     }
+    // store the product within the bounds of A and the overlap region
     for (int i = 0; i < MIN(minRow, D[4]); i++) {
         for (int j = 0; j < MIN(minCol, D[5]); j++) {
             *(*(A + i) + j) = (*(*(M + i) + j)) * (*(*(N + i) + j));
@@ -106,15 +107,15 @@ int HadamardProduct(const int D[6], const int M[D[0]][D[1]],
     }
 
     if ((D[0] == D[4]) && (D[2] == D[4]) && (D[1] == D[5]) && (D[3] == D[5])) {
-        return 1;
+        return 1; // Compatible and A matches result dimensions exactly
     } else if ((D[0] == D[2]) && (D[4] > D[0]) && (D[1] == D[3]) && (D[5] > D[1])) {
-        return 2;
+        return 2; // Compatible and A is larger in both dimensions
     } else if ((D[0] == D[2]) && (D[1] == D[3])) {
-        return -3;
+        return -3; // Compatible but A is too small in either dimension
     } else if (!((D[0] == D[2]) && (D[1] == D[3])) && (D[4] >= minRow) && (D[5] >= minCol) ) {
-        return -1;
+        return -1; // Incompatible but A fits entire overlapping result
     }
-    return -2;
+    return -2; // Incompatible and A is truncated
 }
 
 int Multiplication(const int D[6], const int M[D[0]][D[1]],
@@ -141,6 +142,7 @@ int Multiplication(const int D[6], const int M[D[0]][D[1]],
             *(*(A + i) + j) = 0;
         }
     }
+    // Compute dot product within the limits of matrix A
     for (int i = 0; i < MIN(D[0], D[4]); i++) {
         for (int j = 0; j < MIN(D[3], D[5]); j++) {
             int sum = 0;
@@ -152,15 +154,15 @@ int Multiplication(const int D[6], const int M[D[0]][D[1]],
     }
 
     if ((D[1] == D[2]) && (D[4] == D[0]) && (D[5] == D[3])) {
-        return 1;
+        return 1; // Compatible and A matches product dimensions exactly
     } else if ((D[1] == D[2]) && (D[4] > D[0]) && (D[5] > D[3])) {
-        return 2;
+        return 2; // Compatible and A is strictly larger in both dimensions
     } else if ((D[1] == D[2])) {
-        return -3;
+        return -3; // Compatible but A is too small in either dimension
     } else if (!(D[1] == D[2]) && (D[4] >= D[0]) && (D[5] >= D[3])) {
-        return -1;
+        return -1; // Incompatible but A fits entire product
     }
-    return -2;
+    return -2; // Incompatible and A does not fit the entire product
 }
 
 int DiagonalSum(const int D[4], const int A[D[0]][D[1]], int DS[D[2]][D[3]])
@@ -187,6 +189,7 @@ int DiagonalSum(const int D[4], const int A[D[0]][D[1]], int DS[D[2]][D[3]])
             *(*(DS + i) + j) = 0;
         }
     }
+    // calculate the main diagonal sum
     int diagsum = 0;
     for (int i = 0; i < D[0]; i++) {
         for (int j = 0; j < D[1]; j++) {
@@ -195,15 +198,48 @@ int DiagonalSum(const int D[4], const int A[D[0]][D[1]], int DS[D[2]][D[3]])
             }
         }
     }
+    // store the main diagonal sum in *(*(DS + 0) + 0)
     if (D[2] > 0 && D[3] > 0) {
-        *(*DS) = diagsum;
+        *(*(DS + 0) + 0) = diagsum;
     }
+    // calculate the anti diagonal sum
     int antidiagsum = 0;
     if (D[0] == D[1]) {
-    for (int i = 0; i < D[0]; i++) {
+        for (int i = 0; i < D[0]; i++) {
         antidiagsum += *(*(A + i) + (D[1] - 1 - i));
+        }
+        if (D[2] > 0 && D[3] > 1) {
+        *(*(DS + 0) + 1) = antidiagsum; // store the anti diagonal sum in *(*(DS + 0) + 1)
+        }
     }
-    if (D[2] > 0 && D[3] > 1) {
-        *(*(DS + 0) + 1) = counterdiagsum;
+    // column sums into row 1
+    if (D[2] > 1) {
+        for (int j = 0; j < MIN(D[1], D[3]); j++) {
+            int colsum = 0;
+            for (int i = 0; i < D[0]; i++) {
+                colsum += *(*(A + i) + j);
+            }
+            *(*(DS + 1) + j) = colsum; // store the column sums in *(*(DS + 1) + j)
+        }
     }
+    // row sums into row i+2
+    if (D[3] > 0 && D[2] > 2) {
+        for (int i = 0; i < MIN(D[0], D[2] - 2); i++) {
+            int rowsum = 0;
+            for (int j = 0; j < D[1]; j++) {
+                rowsum += *(*(A + i) + j);
+            }
+            *(*(DS + (i+2)) + 0) = rowsum; // store the row sums into *(*(DS + (i+2)) + 0)
+        }
+    }
+    // return value conditions
+    int reqRows = D[0] + 2;
+    int reqCols = MAX(2, D[1]);
+
+    if (D[2] == reqRows && D[3] == reqCols) {
+        return 1; // Exact fit
+    } else if (D[2] > reqRows && D[3] > reqCols) {
+        return 2; // Larger in both dimensions
+    }
+    return -1; // Too small in either dimension
 }
