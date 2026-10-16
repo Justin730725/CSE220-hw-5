@@ -1,8 +1,8 @@
 /*
  * CSE 220 Homework 5 tests.
  *
- * Name:
- * SBU ID:
+ * Name: Justin Seto
+ * SBU ID: 117203453
  *
  * A few sample tests are given so you can see how Criterion and the provided
  * helpers are used. They fail until you implement the functions, which is
